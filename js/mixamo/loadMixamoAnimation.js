@@ -19,7 +19,7 @@ function loadMixamoAnimation( url, vrm ) {
       const mixamoRigName = trackSplitted[ 0 ];
       const vrmBoneName = mixamoVRMRigMap[ mixamoRigName ];
       
-      const vrmNodeName = vrm.scene?.getChildByName(vrmBoneName)?.name;
+      const vrmNodeName = vrm.scene?.getObjectByName(vrmBoneName)?.name;
       
       if ( vrmNodeName != null ) {
         const propertyName = trackSplitted[ 1 ];

@@ -4,6 +4,7 @@ let currentAnimation = 0;
 // -- vrm ------------------------------------------------------------------------------------------
 let currentVRM = undefined; // 現在使用中のvrm、update内で使えるようにするため
 let currentMixer = undefined; // 現在使用中のAnimationMixer、update内で使えるようにするため
+let controls = null;
 
 const getUrlParameter = (name) => {
   const query = new URLSearchParams(window.location.search);
@@ -30,10 +31,16 @@ function buildScene(){
   renderer.setSize( width, height );
   renderer.outputEncoding = THREE.sRGBEncoding;
   document.body.appendChild( renderer.domElement );
+  
 
   // -- camera ---------------------------------------------------------------------------------------
-  const camera = new THREE.PerspectiveCamera( 30.0, width / height, 0.01, 20.0 );
+  const camera = new THREE.PerspectiveCamera( 40.0, width / height, 0.01, 20.0 );
   camera.position.set( 0.0, 0.0, 5.0 );
+
+  setTimeout(()=>{
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.target.set( 0, 1.5, 0 );
+  }, 0)
 
   // -- scene ----------------------------------------------------------------------------------------
   const scene = new THREE.Scene();
@@ -67,8 +74,8 @@ function buildScene(){
   loadVRM( modelUrl ).then( ( vrm ) => { // vrmを読み込む
     currentVRM = vrm; // currentGLTFにvrmを代入
     scene.add( vrm.scene ); // モデルをsceneに追加し、表示できるようにする
-
-    const head = vrm.scene?.getChildByName('C_hips_001_SCJNT_000');
+    
+    const head = vrm.scene?.getObjectByName('C_hips_001_SCJNT_000');
     let printChildren = (node, depth) => {
       let index = '';
       for(let i=0; i<depth; i++){
@@ -82,7 +89,8 @@ function buildScene(){
     }
     printChildren(head, 0);
     
-    camera.position.set( 0, head.getWorldPosition( new THREE.Vector3() ).y, 8.0 ); // カメラを頭が中心に来るように動かす
+    // camera.position.set( 0, 0, 0 ); // カメラを頭が中心に来るように動かす
+    camera.position.set( 0, head.getWorldPosition( new THREE.Vector3() ).y, 8.0 );
 
     currentMixer = new THREE.AnimationMixer( vrm.scene ); // vrmのAnimationMixerを作る
     currentMixer.timeScale = 1;
