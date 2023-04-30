@@ -1,9 +1,10 @@
 /* global THREE, THREE_VRM, loadVRM, loadMixamoAnimation */
 let tokenId = 81;
+let tokenIds = [];
 let currentAnimation = 0;
 // -- vrm ------------------------------------------------------------------------------------------
-let currentVRM = undefined; // 現在使用中のvrm、update内で使えるようにするため
-let currentMixer = undefined; // 現在使用中のAnimationMixer、update内で使えるようにするため
+let currentVRMs = []; // 現在使用中のvrm、update内で使えるようにするため
+let currentMixers = []; // 現在使用中のAnimationMixer、update内で使えるようにするため
 let controls = null;
 
 const getUrlParameter = (name) => {
@@ -14,6 +15,13 @@ const init = () => {
   const id = getUrlParameter("id");
   if(id){
     tokenId = id;
+  }
+  const ids = getUrlParameter("ids");
+  if(ids){
+    let arr = ids.split(',');
+    tokenIds = arr;
+  } else {
+    tokenIds = [tokenId];
   }
 };
 
@@ -66,39 +74,45 @@ function buildScene(){
   // VRM 0 - this does not work correctly
   // const modelUrl = 'https://m.cyberbrokers.com/eth/mech/653/files/mech_1k.0.vrm'; // モデルのURL
 
+
+  tokenIds.forEach((id, index)=>{
   // VRM 1
-  const modelUrl = 'https://m.cyberbrokers.com/eth/mech/'+tokenId+'/files/mech_2k.vrm';
-  const animationUrl = './assets/animations/Warming Up.fbx'; // MixamoのアニメーションのURL
+    const modelUrl = 'https://m.cyberbrokers.com/eth/mech/'+id+'/files/mech_2k.vrm';
+    const animationUrl = './assets/animations/Warming Up.fbx'; // MixamoのアニメーションのURL
 
-  // See: https://threejs.org/docs/#manual/en/introduction/Animation-system
-  loadVRM( modelUrl ).then( ( vrm ) => { // vrmを読み込む
-    currentVRM = vrm; // currentGLTFにvrmを代入
-    scene.add( vrm.scene ); // モデルをsceneに追加し、表示できるようにする
-    
-    const head = vrm.scene?.getObjectByName('C_hips_001_SCJNT_000');
-    let printChildren = (node, depth) => {
-      let index = '';
-      for(let i=0; i<depth; i++){
-        index += ' ';
+    // See: https://threejs.org/docs/#manual/en/introduction/Animation-system
+    loadVRM( modelUrl ).then( ( vrm ) => { // vrmを読み込む
+      currentVRMs.push(vrm); // currentGLTFにvrmを代入
+      scene.add( vrm.scene ); // モデルをsceneに追加し、表示できるようにする
+      
+      vrm.scene.position.x = 1.5*index - (tokenIds.length/2*1.5);
+      const head = vrm.scene?.getObjectByName('C_hips_001_SCJNT_000');
+      let printChildren = (node, depth) => {
+        let index = '';
+        for(let i=0; i<depth; i++){
+          index += ' ';
+        }
+        index += '-|';
+        console.log(index + node.name)
+        node.children.forEach((node)=>{
+            printChildren(node, depth+1);
+        })
       }
-      index += '-|';
-      console.log(index + node.name)
-      node.children.forEach((node)=>{
-          printChildren(node, depth+1);
-      })
-    }
-    printChildren(head, 0);
-    
-    // camera.position.set( 0, 0, 0 ); // カメラを頭が中心に来るように動かす
-    camera.position.set( 0, head.getWorldPosition( new THREE.Vector3() ).y, 8.0 );
+      printChildren(head, 0);
+      
+      // camera.position.set( 0, 0, 0 ); // カメラを頭が中心に来るように動かす
+      camera.position.set( 0, head.getWorldPosition( new THREE.Vector3() ).y, 8.0 );
 
-    currentMixer = new THREE.AnimationMixer( vrm.scene ); // vrmのAnimationMixerを作る
-    currentMixer.timeScale = 1;
-    
-    loadMixamoAnimation( animationUrl, vrm ).then( ( clip ) => { // アニメーションを読み込む
-      currentMixer.clipAction( clip ).play(); // アニメーションをMixerに適用してplay
+      let mixer = new THREE.AnimationMixer( vrm.scene );
+      mixer.timeScale = 1;
+      currentMixers.push(mixer); // vrmのAnimationMixerを作る
+      
+      
+      loadMixamoAnimation( animationUrl, vrm ).then( ( clip ) => { // アニメーションを読み込む
+        mixer.clipAction( clip ).play(); // アニメーションをMixerに適用してplay
+      } );
     } );
-  } );
+  })
 
   // -- update ---------------------------------------------------------------------------------------
   const clock = new THREE.Clock();
@@ -108,13 +122,17 @@ function buildScene(){
 
     const delta = clock.getDelta(); // 前フレームとの差分時間を取得
     
-    if ( currentMixer ) { // アニメーションが読み込まれていれば
-      currentMixer.update( delta ); // アニメーションをアップデート
-    }
+    currentMixers.forEach((mixer)=>{
+      if ( mixer ) { // アニメーションが読み込まれていれば
+        mixer.update( delta ); // アニメーションをアップデート
+      }
+    })
 
-    if ( currentVRM ) { // VRMが読み込まれていれば
-      currentVRM.update( delta ); // VRMの各コンポーネントを更新
-    }
+    currentVRMs.forEach((vrm)=>{
+      if ( vrm ) { // VRMが読み込まれていれば
+        vrm.update( delta ); // VRMの各コンポーネントを更新
+      }
+    })
 
     renderer.render( scene, camera ); // 描画
   };
@@ -123,10 +141,12 @@ function buildScene(){
 
 
 function playAnimation(){
-  loadMixamoAnimation( './assets/animations/'+animations[currentAnimation], currentVRM ).then( ( clip ) => { // アニメーションを読み込む
-    currentMixer.stopAllAction();
-    currentMixer.clipAction( clip ).play(); // アニメーションをMixerに適用してplay
-  } );
+  currentVRMs.forEach((vrm, index)=>{
+    loadMixamoAnimation( './assets/animations/'+animations[currentAnimation], vrm ).then( ( clip ) => { // アニメーションを読み込む
+      currentMixers[index].stopAllAction();
+      currentMixers[index].clipAction( clip ).play(); // アニメーションをMixerに適用してplay
+    } );
+  });
 }
 function nextAnimation(){
   currentAnimation++;

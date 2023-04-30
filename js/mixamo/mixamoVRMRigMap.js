@@ -71,7 +71,7 @@ const mixamoVRMRigMap = {
   'mixamorigSpine4': 'C_spine_001_SCJNT_004', // Not Used but available in mech
   'mixamorigNeck': 'C_neck_001_SCJNT_000',
   'mixamorigHead': 'C_head_001_SCJNT_000',
-  'mixamorig:HeadTop_End': 'C_head_001_SCJNT_001',
+  'mixamorigHeadTop_End': 'C_head_001_SCJNT_001',
 
   // Left Arm
   'mixamorigLeftShoulder': 'L_shoulder_001_SCJNT_000',
