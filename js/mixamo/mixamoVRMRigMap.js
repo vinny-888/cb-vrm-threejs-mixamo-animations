@@ -67,76 +67,89 @@ const mixamoVRMRigMap = {
   'mixamorigSpine': 'C_spine_001_SCJNT_000',
   'mixamorigSpine1': 'C_spine_001_SCJNT_002',
   'mixamorigSpine2': 'C_spine_001_SCJNT_004',
+  'mixamorigSpine3': 'C_spine_001_SCJNT_003', // Not Used but available in mech
+  'mixamorigSpine4': 'C_spine_001_SCJNT_004', // Not Used but available in mech
   'mixamorigNeck': 'C_neck_001_SCJNT_000',
-  'mixamorigHead': 'C_head_001_SCJNT_001',
+  'mixamorigHead': 'C_head_001_SCJNT_000',
+  'mixamorig:HeadTop_End': 'C_head_001_SCJNT_001',
+
+  // Left Arm
   'mixamorigLeftShoulder': 'L_shoulder_001_SCJNT_000',
   'mixamorigLeftArm': 'L_arm_001_SCJNT_000',
   'mixamorigLeftForeArm': 'L_arm_001_SCJNT_001',
   'mixamorigLeftHand': 'L_hand_001_SCJNT_000',
 
-  'mixamorigLeftHandThumb1': 'leftThumbProximal',
-  'mixamorigLeftHandThumb2': 'leftThumbIntermediate',
-  'mixamorigLeftHandThumb3': 'leftThumbDistal',
-  'mixamorigLeftHandIndex1': 'leftIndexProximal',
-  'mixamorigLeftHandIndex2': 'leftIndexIntermediate',
-  'mixamorigLeftHandIndex3': 'leftIndexDistal',
-  'mixamorigLeftHandMiddle1': 'leftMiddleProximal',
-  'mixamorigLeftHandMiddle2': 'leftMiddleIntermediate',
-  'mixamorigLeftHandMiddle3': 'leftMiddleDistal',
-  'mixamorigLeftHandRing1': 'leftRingProximal',
-
+  // Left Hand
   'mixamorigLeftHandThumb1': 'L_finger_001_SCJNT_001',
   'mixamorigLeftHandThumb2': 'L_finger_001_SCJNT_002',
   'mixamorigLeftHandThumb3': 'L_finger_001_SCJNT_003',
-  'mixamorigLeftHandIndex1': 'leftIndexProximal',
-  'mixamorigLeftHandIndex2': 'leftIndexIntermediate',
-  'mixamorigLeftHandIndex3': 'leftIndexDistal',
+  'mixamorigLeftHandThumb4': 'L_finger_001_SCJNT_004', // Added and present
+
+  'mixamorigLeftHandIndex1': '', // Missing in mech
+  'mixamorigLeftHandIndex2': '', // Missing in mech
+  'mixamorigLeftHandIndex3': '', // Missing in mech
+  'mixamorigLeftHandIndex4': '', // Missing in mech
+
   'mixamorigLeftHandMiddle1': 'L_finger_002_SCJNT_001',
   'mixamorigLeftHandMiddle2': 'L_finger_002_SCJNT_002',
   'mixamorigLeftHandMiddle3': 'L_finger_002_SCJNT_003',
+  'mixamorigLeftHandMiddle4': 'L_finger_002_SCJNT_004', // Added and present
 
-  'mixamorigLeftHandRing1': 'leftRingProximal',
-  'mixamorigLeftHandRing2': 'leftRingIntermediate',
-  'mixamorigLeftHandRing3': 'leftRingDistal',
+  'mixamorigLeftHandRing1': '', // Missing in mech
+  'mixamorigLeftHandRing2': '', // Missing in mech
+  'mixamorigLeftHandRing3': '', // Missing in mech
+  'mixamorigLeftHandRing4': '', // Missing in mech
 
   'mixamorigLeftHandPinky1': 'L_finger_003_SCJNT_001',
   'mixamorigLeftHandPinky2': 'L_finger_003_SCJNT_002',
   'mixamorigLeftHandPinky3': 'L_finger_003_SCJNT_003',
+  'mixamorigLeftHandPinky4': 'L_finger_003_SCJNT_004', // Added and present
 
+  // Right Arm
   'mixamorigRightShoulder': 'R_shoulder_001_SCJNT_000',
   'mixamorigRightArm': 'R_arm_001_SCJNT_000',
   'mixamorigRightForeArm': 'R_arm_001_SCJNT_001',
   'mixamorigRightHand': 'R_hand_001_SCJNT_000',
 
+  // Right Hand
   'mixamorigRightHandPinky1': 'R_finger_003_SCJNT_001',
   'mixamorigRightHandPinky2': 'R_finger_003_SCJNT_002',
   'mixamorigRightHandPinky3': 'R_finger_003_SCJNT_003',
+  'mixamorigRightHandPinky4': 'R_finger_003_SCJNT_004', // Added and present
 
-  'mixamorigRightHandRing1': 'rightRingProximal',
-  'mixamorigRightHandRing2': 'rightRingIntermediate',
-  'mixamorigRightHandRing3': 'rightRingDistal',
+  'mixamorigRightHandRing1': '', // Missing in mech
+  'mixamorigRightHandRing2': '', // Missing in mech
+  'mixamorigRightHandRing3': '', // Missing in mech
+  'mixamorigRightHandRing4': '', // Missing in mech
 
   'mixamorigRightHandMiddle1': 'R_finger_002_SCJNT_001',
   'mixamorigRightHandMiddle2': 'R_finger_002_SCJNT_002',
   'mixamorigRightHandMiddle3': 'R_finger_002_SCJNT_003',
+  'mixamorigRightHandMiddle4': 'R_finger_002_SCJNT_004', // Added and present
 
-  'mixamorigRightHandIndex1': 'rightIndexProximal',
-  'mixamorigRightHandIndex2': 'rightIndexIntermediate',
-  'mixamorigRightHandIndex3': 'rightIndexDistal',
+  'mixamorigRightHandIndex1': '', // Missing in mech
+  'mixamorigRightHandIndex2': '', // Missing in mech
+  'mixamorigRightHandIndex3': '', // Missing in mech
+  'mixamorigRightHandIndex4': '', // Missing in mech
 
   'mixamorigRightHandThumb1': 'R_finger_001_SCJNT_001',
   'mixamorigRightHandThumb2': 'R_finger_001_SCJNT_002',
   'mixamorigRightHandThumb3': 'R_finger_001_SCJNT_003',
+  'mixamorigRightHandThumb4': 'R_finger_001_SCJNT_004', // Added and present
 
+  // Left Leg
   'mixamorigLeftUpLeg': 'L_leg_SCJNT_000',
   'mixamorigLeftLeg': 'L_leg_SCJNT_001',
   'mixamorigLeftFoot': 'L_foot_SCJNT_000',
   'mixamorigLeftToeBase': 'L_foot_SCJNT_001',
+  'mixamorigLeftToe_End': 'L_foot_SCJNT_002', // Added and present
 
+  // Right Leg
   'mixamorigRightUpLeg': 'R_leg_SCJNT_000',
   'mixamorigRightLeg': 'R_leg_SCJNT_001',
   'mixamorigRightFoot': 'R_foot_SCJNT_000',
   'mixamorigRightToeBase': 'R_foot_SCJNT_001',
+  'mixamorigRightToe_End': 'R_foot_SCJNT_002', // Added and present
 };
 
 /* These are not in use but kept for reference */

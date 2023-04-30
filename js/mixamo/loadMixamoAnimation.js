@@ -18,6 +18,8 @@ function loadMixamoAnimation( url, vrm ) {
       const trackSplitted = track.name.split( '.' );
       const mixamoRigName = trackSplitted[ 0 ];
       const vrmBoneName = mixamoVRMRigMap[ mixamoRigName ];
+
+      console.log('mixamoRigName: ', mixamoRigName, ' mechName: ',vrmBoneName );
       
       const vrmNodeName = vrm.scene?.getObjectByName(vrmBoneName)?.name;
       
