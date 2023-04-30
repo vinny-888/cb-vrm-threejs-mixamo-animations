@@ -1,5 +1,5 @@
 /* global THREE, THREE_VRM, loadVRM, loadMixamoAnimation */
-let tokenId = 1;
+let tokenId = 81;
 let currentAnimation = 0;
 // -- vrm ------------------------------------------------------------------------------------------
 let currentVRM = undefined; // 現在使用中のvrm、update内で使えるようにするため
