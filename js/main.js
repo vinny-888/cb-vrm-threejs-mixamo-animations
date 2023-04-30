@@ -1,5 +1,10 @@
 /* global THREE, THREE_VRM, loadVRM, loadMixamoAnimation */
 let tokenId = 1;
+let currentAnimation = 0;
+// -- vrm ------------------------------------------------------------------------------------------
+let currentVRM = undefined; // 現在使用中のvrm、update内で使えるようにするため
+let currentMixer = undefined; // 現在使用中のAnimationMixer、update内で使えるようにするため
+
 const getUrlParameter = (name) => {
   const query = new URLSearchParams(window.location.search);
   return query.get(name);
@@ -33,8 +38,6 @@ function buildScene(){
   // -- scene ----------------------------------------------------------------------------------------
   const scene = new THREE.Scene();
 
-  let currentAnimation = 0;
-
   // -- light ----------------------------------------------------------------------------------------
   const light = new THREE.DirectionalLight( 0xffffff );
   light.position.set( 1.0, 1.0, 1.0 ).normalize();
@@ -52,9 +55,6 @@ function buildScene(){
               ], () => {
               } );
 
-  // -- vrm ------------------------------------------------------------------------------------------
-  let currentVRM = undefined; // 現在使用中のvrm、update内で使えるようにするため
-  let currentMixer = undefined; // 現在使用中のAnimationMixer、update内で使えるようにするため
 
   // VRM 0 - this does not work correctly
   // const modelUrl = 'https://m.cyberbrokers.com/eth/mech/653/files/mech_1k.0.vrm'; // モデルのURL
@@ -115,7 +115,7 @@ function buildScene(){
 
 
 function playAnimation(){
-  loadMixamoAnimation( './animations/'+animations[currentAnimation], currentVRM ).then( ( clip ) => { // アニメーションを読み込む
+  loadMixamoAnimation( './assets/animations/'+animations[currentAnimation], currentVRM ).then( ( clip ) => { // アニメーションを読み込む
     currentMixer.stopAllAction();
     currentMixer.clipAction( clip ).play(); // アニメーションをMixerに適用してplay
   } );
