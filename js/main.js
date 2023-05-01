@@ -35,15 +35,18 @@ const height = window.innerHeight;
 
 function buildScene(){
   // -- renderer -------------------------------------------------------------------------------------
-  const renderer = new THREE.WebGLRenderer();
+  // const renderer = new THREE.WebGLRenderer();
+  var renderer = new THREE.WebGLRenderer({
+    logarithmicDepthBuffer: true
+});
   renderer.setSize( width, height );
   renderer.outputEncoding = THREE.sRGBEncoding;
   document.body.appendChild( renderer.domElement );
   
 
   // -- camera ---------------------------------------------------------------------------------------
-  const camera = new THREE.PerspectiveCamera( 40.0, width / height, 0.01, 20.0 );
-  camera.position.set( 0.0, 0.0, 5.0 );
+  const camera = new THREE.PerspectiveCamera( 40.0, width / height, 0.01, 200.0 );
+  camera.position.set( 0.0, 1.7, 8.0 );
 
   setTimeout(()=>{
     controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -80,12 +83,21 @@ function buildScene(){
     const modelUrl = 'https://m.cyberbrokers.com/eth/mech/'+id+'/files/mech_2k.vrm';
     const animationUrl = './assets/animations/Warming Up.fbx'; // MixamoのアニメーションのURL
 
+    loadGLTF('./assets/models/dojo.glb', (gltf)=>{
+      gltf.scene.scale.set(1,1,1);
+      scene.add(gltf.scene);
+    })
     // See: https://threejs.org/docs/#manual/en/introduction/Animation-system
     loadVRM( modelUrl ).then( ( vrm ) => { // vrmを読み込む
       currentVRMs.push(vrm); // currentGLTFにvrmを代入
       scene.add( vrm.scene ); // モデルをsceneに追加し、表示できるようにする
       
-      vrm.scene.position.x = 1.5*index - (tokenIds.length/2*1.5);
+      if(index % 2 == 0){
+        vrm.scene.position.x = 1.5*index - (tokenIds.length/2*1.5) + (0.5-Math.random()/2);
+        vrm.scene.position.z = -2.5 + (0.5-Math.random()/2);
+      } else {
+        vrm.scene.position.x = 1.5*index - (tokenIds.length/2*1.5);
+      }
       const head = vrm.scene?.getObjectByName('C_hips_001_SCJNT_000');
       let printChildren = (node, depth) => {
         let index = '';
@@ -101,7 +113,7 @@ function buildScene(){
       printChildren(head, 0);
       
       // camera.position.set( 0, 0, 0 ); // カメラを頭が中心に来るように動かす
-      camera.position.set( 0, head.getWorldPosition( new THREE.Vector3() ).y, 8.0 );
+      // camera.position.set( 0, head.getWorldPosition( new THREE.Vector3() ).y, 8.0 );
 
       let mixer = new THREE.AnimationMixer( vrm.scene );
       mixer.timeScale = 1;
@@ -118,6 +130,12 @@ function buildScene(){
   const clock = new THREE.Clock();
   clock.start();
   function update() {
+    if(camera.zoom >= 1.5){
+      camera.zoom = 1.5;
+    } 
+    if(camera.zoom <= 0.5){ 
+      camera.zoom = 0.5;
+    } 
     requestAnimationFrame( update );
 
     const delta = clock.getDelta(); // 前フレームとの差分時間を取得
