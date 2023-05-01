@@ -165,10 +165,10 @@ function prevAnimation(){
 
 document.addEventListener('keyup', (e) => {
   if (e.code === "ArrowUp"){
-    prevAnimation();
+    nextAnimation();
   }
   else if (e.code === "ArrowDown"){
-    nextAnimation();
+    prevAnimation();
   }
 });
 

@@ -29,9 +29,11 @@ function loadMixamoAnimation( url, vrm ) {
         if ( track instanceof THREE.QuaternionKeyframeTrack ) {
           let vals = track.values;
           if(false && (vrmNodeName == 'L_foot_SCJNT_000' 
-          // || vrmNodeName == 'L_foot_SCJNT_001'
+          || vrmNodeName == 'L_foot_SCJNT_001'
+          || vrmNodeName == 'L_foot_SCJNT_002'
           || vrmNodeName == 'R_foot_SCJNT_000'
-          // || vrmNodeName == 'R_foot_SCJNT_001'
+          || vrmNodeName == 'R_foot_SCJNT_001'
+          || vrmNodeName == 'R_foot_SCJNT_002'
           )
            ){
             let newVals = [];
@@ -92,22 +94,43 @@ function loadMixamoAnimation( url, vrm ) {
               // vector.applyAxisAngle( axis3, angle3 );
 
 
-              const quaternion = new THREE.Quaternion();
-              quaternion.setFromAxisAngle( new THREE.Vector3( vals[i],vals[i+1],vals[i+2] ), vals[i+3] );
+              // const quaternion = new THREE.Quaternion();
+              // quaternion.setFromAxisAngle( new THREE.Vector3( vals[i],vals[i+1],vals[i+2] ), vals[i+3] );
 
-              let vector = new THREE.Vector3(vals[0],vals[1],vals[2])
+              let vector = new THREE.Vector3(vals[i],vals[i+1],vals[i+2])
               // const vector = new THREE.Vector3( 1, 1, 1 );
               // vector.applyQuaternion( quaternion );
 
               var angle3 = Math.PI/2;
-              var axis3 = new THREE.Vector3( 0, 1, 0 );
+              var axis3 = new THREE.Vector3( 0, 0, 1 );
               // vector.applyQuaternion( quaternion );
               vector.applyAxisAngle( axis3, angle3 );
 
-              newVals[i] = vector.x;
-              newVals[i+1] = vector.y;
-              newVals[i+2] = vector.z;
-              newVals[i+3] = vals[i+3];
+
+              const quaternion = new THREE.Quaternion();
+              quaternion.setFromAxisAngle( new THREE.Vector3( vals[i],vals[i+1],vals[i+2] ), Math.PI/2 );
+              // quaternion.identity();
+              var euler = new THREE.Euler(Math.PI*0.5, Math.PI*0.5, 0);
+              quaternion.setFromEuler(euler);
+
+              // quaternion.setFromRotationMatrix(new Matrix)
+
+              // rotation.setFromQuaternion( quaternion )
+
+
+              // cube.rotateOnAxis(axis1, angle1);
+              // cube.rotateOnAxis(axis2, angle2);
+
+              newVals[i] = quaternion.x;
+              newVals[i+1] = quaternion.y;
+              newVals[i+2] = quaternion.z;
+              newVals[i+3] = quaternion.w;
+              
+
+              // newVals[i] = vector.x;
+              // newVals[i+1] = vector.y;
+              // newVals[i+2] = vector.z;
+              // newVals[i+3] = vals[i+3];
             }
             vals = newVals;
           }
