@@ -1,158 +1,86 @@
 /* global THREE, THREE_VRM, mixamoVRMRigMap */
 
-/**
- * Mixamoのアニメーションを読み込み、VRM向けに調整して返す
- * @param {string} url Mixamoのモーションが入ったURL
- * @param {VRM} vrm VRMモデル
- * @returns {Promise<THREE.AnimationClip>} AnimationClip
- */
 function loadMixamoAnimation( url, vrm ) {
-  const loader = new THREE.FBXLoader(); // FBXを読み込むLoader
-  return loader.loadAsync( url ).then( ( asset ) => {
-    const clip = THREE.AnimationClip.findByName( asset.animations, 'mixamo.com' ); // AnimationClipを抽出する
+  const loader = new THREE.FBXLoader(); // A loader which loads FBX
+	return loader.loadAsync( url ).then( ( asset ) => {
 
-    const tracks = []; // VRM用のKeyframeTrackをこの配列に格納する
+		const clip = THREE.AnimationClip.findByName( asset.animations, 'mixamo.com' ); // extract the AnimationClip
 
-    clip.tracks.forEach( ( track ) => {
-      // 各TrackをVRM向けに変換し、 `tracks` に格納する
-      const trackSplitted = track.name.split( '.' );
-      const mixamoRigName = trackSplitted[ 0 ];
-      const vrmBoneName = mixamoVRMRigMap[ mixamoRigName ];
+		const tracks = []; // KeyframeTracks compatible with VRM will be added here
 
-      console.log('mixamoRigName: ', mixamoRigName, ' mechName: ',vrmBoneName );
-      
-      const vrmNodeName = vrm.scene?.getObjectByName(vrmBoneName)?.name;
-      
-      if ( vrmNodeName != null ) {
-        const propertyName = trackSplitted[ 1 ];
+		const restRotationInverse = new THREE.Quaternion();
+		const parentRestWorldRotation = new THREE.Quaternion();
+		const _quatA = new THREE.Quaternion();
+		const _vec3 = new THREE.Vector3();
 
-        if ( track instanceof THREE.QuaternionKeyframeTrack ) {
-          let vals = track.values;
-          if(false && (vrmNodeName == 'L_foot_SCJNT_000' 
-          || vrmNodeName == 'L_foot_SCJNT_001'
-          || vrmNodeName == 'L_foot_SCJNT_002'
-          || vrmNodeName == 'R_foot_SCJNT_000'
-          || vrmNodeName == 'R_foot_SCJNT_001'
-          || vrmNodeName == 'R_foot_SCJNT_002'
-          )
-           ){
-            let newVals = [];
-            for(let i=0; i<vals.length; i+=4){
-              // var euler = new THREE.Euler(0, Math.PI, 0);
-              // var quaternion = new THREE.Quaternion();
-              // quaternion.setFromEuler(euler);
-                //let vector = new THREE.Vector3(vals[0],vals[1],vals[2])
-              // rotation.setFromQuaternion( quaternion )
-              // var angle = Math.PI;
-                //var angle = Math.PI/2;
-              // var axis = new THREE.Vector3( 1, 0, 0 );
-                //var axis = new THREE.Vector3( 0, 1, 0 );
-              // var axis = new THREE.Vector3( 0, 0, 1 );
-              // var axis = new THREE.Vector3( -1, 0, 0 );
-              // var axis = new THREE.Vector3( 0, -1, 0 );
-              // var axis = new THREE.Vector3( 0, 0, -1 );
+		// Adjust with reference to hips height.
+		const motionHipsHeight = asset.getObjectByName( 'mixamorigHips' ).position.y;
+		const vrmHipsY = vrm.humanoid?.getNormalizedBoneNode( 'hips' ).getWorldPosition( _vec3 ).y;
+		const vrmRootY = vrm.scene.getWorldPosition( _vec3 ).y;
+		const vrmHipsHeight = Math.abs( vrmHipsY - vrmRootY );
+		const hipsPositionScale = vrmHipsHeight / motionHipsHeight;
 
-              // var axis = new THREE.Vector3( 1, 1, 0 );
-              // var axis = new THREE.Vector3( 0, 1, 1 );
-              // var axis = new THREE.Vector3( 1, 0, 1 );
-              // var axis = new THREE.Vector3( -1, 1, 0 );
-              // var axis = new THREE.Vector3( 0, -1, 1 );
-              // var axis = new THREE.Vector3( -1, 0, 1 );
-              // var axis = new THREE.Vector3( 1, -1, 0 );
-              // var axis = new THREE.Vector3( 0, 1, -1 );
-              // var axis = new THREE.Vector3( 1, 0, -1 );
+		clip.tracks.forEach( ( track ) => {
 
-              // var axis = new THREE.Vector3( 1, 1, 1 );
-              // var axis = new THREE.Vector3( -1, 1, 1 );
-              // var axis = new THREE.Vector3( 1, -1, 1 );
-              // var axis = new THREE.Vector3( 1, 1, -1 );
-              // var axis = new THREE.Vector3( -1, -1, 1 );
-              // var axis = new THREE.Vector3( 1, -1, -1 );
-              // var axis = new THREE.Vector3( -1, 1, -1 );
+			// Convert each tracks for VRM use, and push to `tracks`
+			const trackSplitted = track.name.split( '.' );
+			const mixamoRigName = trackSplitted[ 0 ];
+			const vrmBoneName = mixamoVRMRigMap[ mixamoRigName ];
+			const vrmNodeName = vrm.humanoid?.getNormalizedBoneNode( vrmBoneName )?.name;
+			const mixamoRigNode = asset.getObjectByName( mixamoRigName );
 
+			if ( vrmNodeName != null ) {
 
-              // vector.applyAxisAngle( axis, angle );
+				const propertyName = trackSplitted[ 1 ];
 
-              // let vector = new THREE.Vector3(vals[0],vals[1],vals[2])
+				// Store rotations of rest-pose.
+				mixamoRigNode.getWorldQuaternion( restRotationInverse ).invert();
+				mixamoRigNode.parent.getWorldQuaternion( parentRestWorldRotation );
 
-              // var angle2 = Math.PI;
-              // var axis2 = new THREE.Vector3( 1, 0, 0 );
-              // var axis2 = new THREE.Vector3( 0, 1, 0 );
-              // var axis2 = new THREE.Vector3( 0, 0, 1 );
+				if ( track instanceof THREE.QuaternionKeyframeTrack ) {
 
-              // var axis2 = new THREE.Vector3( 1, 1, 0 );
-              // var axis2 = new THREE.Vector3( 0, 1, 1 );
-              // var axis2 = new THREE.Vector3( 1, 0, 1 );
-              // vector.applyAxisAngle( axis2, angle2 );
+					// Retarget rotation of mixamoRig to NormalizedBone.
+					for ( let i = 0; i < track.values.length; i += 4 ) {
 
-              // var angle1 = Math.PI/2;
-              // var axis1 = new THREE.Vector3( 0, 1, 0 );
-              // vector.applyAxisAngle( axis1, angle1 );
+						const flatQuaternion = track.values.slice( i, i + 4 );
 
-              // var angle3 = Math.PI/2;
-              // var axis3 = new THREE.Vector3( 0, 0, 1 );
-              // vector.applyAxisAngle( axis3, angle3 );
+						_quatA.fromArray( flatQuaternion );
 
+						// 親のレスト時ワールド回転 * トラックの回転 * レスト時ワールド回転の逆
+						_quatA
+							.premultiply( parentRestWorldRotation )
+							.multiply( restRotationInverse );
 
-              // const quaternion = new THREE.Quaternion();
-              // quaternion.setFromAxisAngle( new THREE.Vector3( vals[i],vals[i+1],vals[i+2] ), vals[i+3] );
+						_quatA.toArray( flatQuaternion );
 
-              let vector = new THREE.Vector3(vals[i],vals[i+1],vals[i+2])
-              // const vector = new THREE.Vector3( 1, 1, 1 );
-              // vector.applyQuaternion( quaternion );
+						flatQuaternion.forEach( ( v, index ) => {
 
-              var angle3 = Math.PI/2;
-              var axis3 = new THREE.Vector3( 0, 0, 1 );
-              // vector.applyQuaternion( quaternion );
-              vector.applyAxisAngle( axis3, angle3 );
+							track.values[ index + i ] = v;
 
+						} );
 
-              const quaternion = new THREE.Quaternion();
-              quaternion.setFromAxisAngle( new THREE.Vector3( vals[i],vals[i+1],vals[i+2] ), Math.PI/2 );
-              // quaternion.identity();
-              var euler = new THREE.Euler(Math.PI*0.5, Math.PI*0.5, 0);
-              quaternion.setFromEuler(euler);
+					}
 
-              // quaternion.setFromRotationMatrix(new Matrix)
+					tracks.push(
+						new THREE.QuaternionKeyframeTrack(
+							`${vrmNodeName}.${propertyName}`,
+							track.times,
+							track.values.map( ( v, i ) => ( vrm.meta?.metaVersion === '0' && i % 2 === 0 ? - v : v ) ),
+						),
+					);
 
-              // rotation.setFromQuaternion( quaternion )
+				} else if ( track instanceof THREE.VectorKeyframeTrack ) {
 
+					const value = track.values.map( ( v, i ) => ( vrm.meta?.metaVersion === '0' && i % 3 !== 1 ? - v : v ) * hipsPositionScale );
+					tracks.push( new THREE.VectorKeyframeTrack( `${vrmNodeName}.${propertyName}`, track.times, value ) );
 
-              // cube.rotateOnAxis(axis1, angle1);
-              // cube.rotateOnAxis(axis2, angle2);
+				}
 
-              newVals[i] = quaternion.x;
-              newVals[i+1] = quaternion.y;
-              newVals[i+2] = quaternion.z;
-              newVals[i+3] = quaternion.w;
-              
+			}
 
-              // newVals[i] = vector.x;
-              // newVals[i+1] = vector.y;
-              // newVals[i+2] = vector.z;
-              // newVals[i+3] = vals[i+3];
-            }
-            vals = newVals;
-          }
-          tracks.push( new THREE.QuaternionKeyframeTrack(
-            `${ vrmNodeName }.${ propertyName }`,
-            track.times,
-            vals.map( ( v, i ) => (
-              ( vrm.meta?.metaVersion === '3' && ( i % 2 ) === 0 ) ? -v : v
-            ) ),
-          ) );
-        } else if ( track instanceof THREE.VectorKeyframeTrack ) {
-          tracks.push( new THREE.VectorKeyframeTrack(
-            `${ vrmNodeName }.${ propertyName }`,
-            track.times,
-            track.values.map( ( v, i ) => (
-              ( ( vrm.meta?.metaVersion === '3' && ( i % 3 ) !== 1 ) ? -v : v ) * 0.01
-            ) ),
-          ) );
-        }
-      }
-    } );
-    
-    return new THREE.AnimationClip( 'vrmAnimation', clip.duration, tracks );
-  } );
+		} );
+
+		return new THREE.AnimationClip( 'vrmAnimation', clip.duration, tracks );
+
+	} );
 }

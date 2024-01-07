@@ -81,6 +81,7 @@ function buildScene(){
   tokenIds.forEach((id, index)=>{
   // VRM 1
     const modelUrl = 'https://m.cyberbrokers.com/eth/mech/'+id+'/files/mech_2k.vrm';
+    // const modelUrl = './assets/mechs/mech_4k.vrm';
     const animationUrl = './assets/animations/Warming Up.fbx'; // MixamoのアニメーションのURL
 
     loadGLTF('./assets/models/dojo.glb', (gltf)=>{
@@ -98,19 +99,19 @@ function buildScene(){
       } else {
         vrm.scene.position.x = 1.5*index - (tokenIds.length/2*1.5);
       }
-      const head = vrm.scene?.getObjectByName('C_hips_001_SCJNT_000');
-      let printChildren = (node, depth) => {
-        let index = '';
-        for(let i=0; i<depth; i++){
-          index += ' ';
-        }
-        index += '-|';
-        console.log(index + node.name)
-        node.children.forEach((node)=>{
-            printChildren(node, depth+1);
-        })
-      }
-      printChildren(head, 0);
+      // const head = vrm.scene?.getObjectByName('C_hips_001_SCJNT_000');
+      // let printChildren = (node, depth) => {
+      //   let index = '';
+      //   for(let i=0; i<depth; i++){
+      //     index += ' ';
+      //   }
+      //   index += '-|';
+      //   console.log(index + node.name)
+      //   node.children.forEach((node)=>{
+      //       printChildren(node, depth+1);
+      //   })
+      // }
+      // printChildren(head, 0);
       
       // camera.position.set( 0, 0, 0 ); // カメラを頭が中心に来るように動かす
       // camera.position.set( 0, head.getWorldPosition( new THREE.Vector3() ).y, 8.0 );

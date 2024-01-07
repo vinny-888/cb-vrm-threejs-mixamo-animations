@@ -12,7 +12,7 @@ function loadVRM( modelUrl ) { // モデルを読み込む処理
   
   return loader.loadAsync( modelUrl ).then( ( gltf ) => {
     const vrm = gltf.userData.vrm; // VRMを制御するためのクラス `VRM` が `gltf.userData.vrm` に入っています
-    
+
     // This tries to fix VRM 0 but it has no effect on VRM 1
     THREE_VRM.VRMUtils.rotateVRM0( vrm ); // 読み込んだモデルがVRM0.0の場合は回す
     
