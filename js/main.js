@@ -102,7 +102,7 @@ function buildScene(){
       } else {
         vrm.scene.position.x = 1.5*index - (tokenIds.length/2*1.5);
       }
-      vrm.scene.position.y = -0.3;
+      vrm.scene.position.y = -0.25;
       // const head = vrm.scene?.getObjectByName('C_hips_001_SCJNT_000');
       // let printChildren = (node, depth) => {
       //   let index = '';
