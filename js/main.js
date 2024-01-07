@@ -57,9 +57,12 @@ function buildScene(){
   const scene = new THREE.Scene();
 
   // -- light ----------------------------------------------------------------------------------------
-  const light = new THREE.DirectionalLight( 0xffffff );
-  light.position.set( 1.0, 1.0, 1.0 ).normalize();
-  scene.add( light );
+  const light1 = new THREE.DirectionalLight( 0xffffff );
+  light1.position.set( 1.0, 1.0, 1.0 ).normalize();
+  scene.add( light1 );
+
+  const light2 = new THREE.AmbientLight( 0x404040 );
+  scene.add( light2 );
 
   scene.background = new THREE.CubeTextureLoader()
             .setPath( `./assets/skybox/` )
@@ -99,6 +102,7 @@ function buildScene(){
       } else {
         vrm.scene.position.x = 1.5*index - (tokenIds.length/2*1.5);
       }
+      vrm.scene.position.y = -0.3;
       // const head = vrm.scene?.getObjectByName('C_hips_001_SCJNT_000');
       // let printChildren = (node, depth) => {
       //   let index = '';
